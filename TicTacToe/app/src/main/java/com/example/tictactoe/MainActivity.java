@@ -21,9 +21,10 @@ public class MainActivity extends AppCompatActivity {
     private int mCurrentPlayer = CellStatus.FIRST_PLAYER;
 
     private void resetGameState() {
+        mMessageText.setText("Tic Tac Toe");
         for (int i = 0; i < GRID_SIZE; ++i) {
             for (int j = 0; j < GRID_SIZE; ++j) {
-                mGameState[i][j].setPlayer(CellStatus.NO_PLAYER);
+                mGameState[i][j] = new CellStatus();
                 mButtons[i][j].setImageResource(R.drawable.empty);
             }
         }
@@ -32,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
     protected int checkGameWin() {
         if (checkPlayerWon(CellStatus.FIRST_PLAYER)) return CellStatus.FIRST_PLAYER;
         if (checkPlayerWon(CellStatus.SECOND_PLAYER)) return CellStatus.SECOND_PLAYER;
+        int count = 0;
+        for (int i = 0; i < GRID_SIZE; ++i) {
+            for (int j = 0; j < GRID_SIZE; ++j) {
+                if (mGameState[i][j].getPlayer() != CellStatus.NO_PLAYER) ++count;
+            }
+        }
+        if (count == 9) return CellStatus.DRAW;
         return CellStatus.NO_PLAYER;
     }
 
@@ -49,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
             if (winRow || winCol) return true;
         }
 
+
         if (winDiag1 || winDiag2) return true;
+
         return false;
     }
 
@@ -72,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (mGameState[row][col].getPlayer() == CellStatus.NO_PLAYER) {
+                            mGameState[row][col].setPlayer(mCurrentPlayer);
                             if (mCurrentPlayer == CellStatus.FIRST_PLAYER) {
                                 mButtons[row][col].setImageResource(R.drawable.nought);
                             } else {
@@ -83,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
                                 mMessageText.setText("Winner is First Player!");
                             else if (winner == CellStatus.SECOND_PLAYER)
                                 mMessageText.setText("Winner is Second Player!");
+                            else if (winner == CellStatus.DRAW)
+                                mMessageText.setText("Match is draw!");
+
                         }
                     }
                 });
