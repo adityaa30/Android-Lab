@@ -1,27 +1,25 @@
 package com.example.restaurentmenu
 
 
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
-import org.w3c.dom.Text
 
 class DishAdapter(
-    private val dishes: ArrayList<Dish>
+    private val dishes: ArrayList<Dish>,
+    private val mOnSelectListener: OnSelectListener
 ) : RecyclerView.Adapter<DishAdapter.DishViewHolder>() {
 
     companion object {
         private const val TAG = "DishAdapter"
     }
 
-    val mSelectedDisheh = HashSet<Dish>()
+    val mSelectedDishes = HashSet<Dish>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishViewHolder {
@@ -39,26 +37,37 @@ class DishAdapter(
         holder.bind(dishes[position])
     }
 
+    public fun clearDishes() {
+//        mSelectedDishes.clear()
+//        notifyDataSetChanged()
+    }
+
+
+
     inner class DishViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val mContainer = view.findViewById(R.id.container) as MaterialCardView
         private val mCheckBox = view.findViewById(R.id.checkbox) as MaterialCheckBox
-        private val mPrice = view.findViewById(R.id.name) as TextView
+        private val mPrice = view.findViewById(R.id.price) as TextView
 
         init {
             mCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked) {
-                    mSelectedDisheh.add(dishes[adapterPosition])
+                if (isChecked) {
+                    mSelectedDishes.add(dishes[adapterPosition])
+                    mOnSelectListener.onSelectDish(dishes[adapterPosition])
+                    Log.v(TAG, "Added: ${dishes[adapterPosition]}")
                 } else {
-                    mSelectedDisheh.remove(dishes[adapterPosition])
+                    mSelectedDishes.remove(dishes[adapterPosition])
+                    mOnSelectListener.onDeselectDish(dishes[adapterPosition])
+                    Log.v(TAG, "Removed: ${dishes[adapterPosition]}")
                 }
             }
         }
 
-        fun bind(currentDist: Dish) {
-
-            mCheckBox.text = currentDist.name
-
+        fun bind(currentDish: Dish) {
+            mCheckBox.text = currentDish.name
+            mCheckBox.isChecked = mSelectedDishes.contains(currentDish)
+            mPrice.text = currentDish.price.toString()
         }
     }
 }
