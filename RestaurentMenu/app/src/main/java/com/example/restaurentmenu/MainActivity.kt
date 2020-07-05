@@ -1,12 +1,13 @@
 package com.example.restaurentmenu
 
-import android.content.DialogInterface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
@@ -24,9 +25,12 @@ class MainActivity : AppCompatActivity() {
         mCuisines = getCuisines()
         mCuisinesAdapter = CuisineAdapter(mCuisines)
 
+        val snapHelper = LinearSnapHelper()
         mCuisinesList = findViewById(R.id.cuisines)
+        snapHelper.attachToRecyclerView(mCuisinesList)
         mCuisinesList.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager =
+                LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = mCuisinesAdapter
         }
 
